@@ -58,7 +58,7 @@ def start(): # initialise game and variables
       boards, num =  randomNum(boards,players,length,width)
       topline = displayRandomNum( num, players,length)
       displayAllBoards(boards,players,length,topline)
-      time.sleep(1)
+      time.sleep(2.5)
       r += 1
       end = endGame(boards,players,length,width) # do this + add comments to this and mancala
 
