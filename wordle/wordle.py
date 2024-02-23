@@ -42,16 +42,23 @@ def validWord(userInput): # check if the word inputted by the user is a valid wo
 def checkAnswer(userInput, answer):
     clue =["","","","","",""] # initialise the clue variable
     for index in range(len(userInput)):
-        try: # .index() returns an error so we catch the error and add an x to show that the letter has not been found
-          if index == answer.index(userInput[index] ):#check if the letter is in the same place
-            answer[index] = ("!")# this accounts for duplicate letters making sure the clues given are accurate
-            clue[index] = ("+")#correct place
-          elif userInput[index] in answer:
-                answer[answer.index(userInput[index])] = ("!")# this accounts for duplicate letters making sure the clues given are accurate
-                clue[index] = ("-")#in the word not correct place
-        except:
-             clue[index] = ("x")# not in the word
+        if userInput[index] == answer[index]:#check if the letter is in the same place
+          answer[index] = ("@")# this accounts for duplicate letters making sure the clues given are accurate
+          clue[index] = ('+')#correct place
+    for index in range(len(userInput)):
+          if userInput[index] in answer and answer[index] != "@":
+              answer[answer.index(userInput[index])] = ("!")# this accounts for duplicate letters making sure the clues given are accurate
+              clue[index] = ("-")#in the word not correct place
+          elif userInput[index] not in answer and answer[index] != "@":
+              clue[index] = ("X")
     return clue
+
+def green(userInput, answer, clue):
+  for index in range(len(userInput)):
+        if userInput[index] == answer[index]:
+              answer[index] = ("!")# this accounts for duplicate letters making sure the clues given are accurate
+              clue[index] = ("+")#in the correct place
+  return clue
 
 
 def changeBoard(board, clue, guess):
@@ -70,26 +77,34 @@ def end(win,answer,guess): #end of game
     print(" Congratulations, you won in {} tries".format(guess)) 
   else:
     print(" You lost, the word was {}, better luck next time!".format(answer.strip()))
+  yn = input(" Do you want to play again (Y/N)? ")
+  if yn.upper() == "Y":
+    main()
+  else:
+    input(" Thanks for playing!")
 
 #todo
 #make the game loop if the player wants to continue playing
 
-guess = 0
-board =makeBoard(6,6)
-displayBoard(board)
-word = randomWord()
-win = False
-while guess < 6:
-  userInput = input(" Enter a 6 letter word: ").lower()
-  userInput = validWord(userInput)
-  clue = checkAnswer (userInput, list(word))
-  board = changeBoard(board, clue, guess)
-  if  checkWin(guess ,board) == True:
-    win = True
+def main():
+  guess = 0
+  board =makeBoard(6,6)
+  displayBoard(board)
+  word = randomWord()
+  win = False
+  while guess < 6: #only give 6 guesses
+    userInput = input(" Enter a 6 letter word: ").lower()#make sure its always lowercase
+    userInput = validWord(userInput)
+    clue = checkAnswer (userInput, list(word))
+    board = changeBoard(board, clue, guess)
+    if checkWin(guess ,board) == True: # check the condition the win condition after a turn
+      win = True
+      guess += 1
+      displayBoard(board)
+      break
     guess += 1
     displayBoard(board)
-    break
-  guess += 1
-  displayBoard(board)
-end(win,word,guess)
-input()
+  end(win,word,guess)
+
+
+main()
