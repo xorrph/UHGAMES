@@ -155,7 +155,7 @@ def endGame(boards,players,length,width):
       for index in range(width):
         if boards[c][row][index] != " XX ":
           return False
-    print("Player {} won!!".format(players[c]))
+    print(" Player {} won!!".format(players[c]))
     return True
 
 
