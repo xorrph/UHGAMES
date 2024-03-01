@@ -1,4 +1,5 @@
 # MANCALA
+import time
 empty = " 04 " 
 free = False
 
@@ -12,17 +13,20 @@ def makeBoard(width,length):
 
 def displayBoard(board,totalA,totalB,turn):
     count = 6
-    print("  Player {} board: ".format(turn))
-    print("  +=============+")
-    print("  |     " + totalB + "     |")
-    print("  +=============+")
+    print("                               ")
+    print("----------------------")
+    print("                               ")
+    print("   Player {} board: ".format(turn))
+    print("   +=============+")
+    print("   |     " + totalB + "     |")
+    print("   +=============+")
     for row in board:
         grid = (" | ").join(row)
-        print(str(count )+ (" | ") + grid + (" | "))
+        print(" "+str(count)+ (" | ") + grid + (" | "))
         count -= 1
-    print("  +=============+")
-    print("  |     " + totalA + "     |")
-    print("  +=============+")
+    print("   +=============+")
+    print("   |     " + totalA + "     |")
+    print("   +=============+")
     print("                               ")
     print("----------------------")
     print("                               ")
@@ -100,28 +104,30 @@ def main(board,totalA,totalB):
     if empty == True:
       turn = "A"
       break
+    time.sleep(1)
     board, totalB,totalA = bTurn(flipBoard(board), totalB, totalA, "B")
     free = False
     displayBoard(board,formatScore(totalA),formatScore(totalB), "B")
     empty = checkEmpty(board)
     turn = "B"
     flipBoard(board)
+    time.sleep(1)
   endGame(board,totalA,totalB,turn)
 
 
 def aTurn(board, totalA, totalB, turn):
   global free
   displayBoard(board,formatScore(totalA),formatScore(totalB), turn)
-  inpA = len(board) - int(input("Player A, please enter which number to choose from: "))
+  inpA = len(board) - int(input(" Player A, please enter which slot to choose from: "))
   board, totalA,totalB = traverse(board,inpA,totalA,totalB,turn)
   if free == False:
-   displayBoard(board,formatScore(totalA),formatScore(totalB), turn)
+    displayBoard(board,formatScore(totalA),formatScore(totalB), turn)
   return board, totalA,totalB
 
 def bTurn(board, totalB, totalA, turn):
   global free
   displayBoard(board,formatScore(totalB),formatScore(totalA), turn)
-  inpB = len(board) - int(input("Player B, please enter which number to choose from: ")) 
+  inpB = len(board) - int(input(" Player B, please enter which slot to choose from: ")) 
   board, totalB, totalA = traverse(board,inpB,totalB,totalA,turn)
   if free == False:
     displayBoard(board,formatScore(totalB),formatScore(totalA), turn)
