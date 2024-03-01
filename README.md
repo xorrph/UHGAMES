@@ -1,4 +1,4 @@
 # UNI-PYTHON
-# This is a team project for the University of Hertfordshire first year
-# This has been coded by Naglis Slamiskis
+#### This is a first year team project for the University of Hertfordshire for UH GAMES
+#### This has been coded by Naglis Slamiskis
  
