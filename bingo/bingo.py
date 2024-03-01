@@ -55,7 +55,7 @@ def start(): # initialise game and variables
     r = 1
     while end == False:
       print("")
-      print("Round {}".format(r))
+      print(" Round {}".format(r))
       changes, bingos, boards, num =  randomNum(bingos,boards,players,length,width)
       topline = displayRandomNum( num, players,width)
       L = dispChange(changes,width)
