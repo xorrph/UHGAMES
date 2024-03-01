@@ -1,6 +1,6 @@
 # MANCALA
 empty = " 04 " 
-
+free = False
 
 
 def makeBoard(width,length):
@@ -12,7 +12,7 @@ def makeBoard(width,length):
 
 def displayBoard(board,totalA,totalB,turn):
     count = 6
-    print("   Player {} board: ".format(turn))
+    print("  Player {} board: ".format(turn))
     print("  +=============+")
     print("  |     " + totalB + "     |")
     print("  +=============+")
@@ -51,6 +51,7 @@ def formatSquare(num):
         return   " 0" + num[0] + " "
 
 def traverse(board,num,totalA,totalB,turn):
+    global free
     count = 0 
     temp =  int(board[num][0] )
     start = num 
@@ -58,70 +59,127 @@ def traverse(board,num,totalA,totalB,turn):
     board[start][side] = formatSquare(0)
     index  = start + 1 
     while count < temp:
-        if count < temp and index <=  len(board)  - 1 and side == 0:
+        if count < temp and index <= len(board)  - 1 and side == 0:
             board[index][side]  = formatSquare(int(board[index][side]) + 1)
             index += 1
             count += 1
-        elif count < temp and index == len(board) :
+        elif count < temp and (index == len(board) or index == -1):
             if side == 0:
                 totalA += 1
-                side += 1
-                index = len(board) -1
                 if count == temp - 1 and turn == "A":
-                  board = aTurn(board, totalA, totalB, turn)
-                  break
+                  free = True
+                  board, totalA,totalB = aTurn(board, totalA, totalB, turn)
                 elif count == temp - 1 and turn == "B":
-                  board = bTurn(board, totalB, totalA, turn)
-                  break
+                  free = True
+                  board, totalA,totalB = bTurn(board, totalA, totalB, turn)
+                else:
+                  side = 1
+                  index = len(board) -1
             elif side == 1:
                 totalB +=1
-                side -= 1
+                side = 0
                 index = 0
             count += 1
         elif count < temp and index >= 0 and side == 1:
           board[index][side]  =  formatSquare(int(board[index][side]) + 1)
           index -= 1
           count += 1
-    return board, totalA,totalB
+    capture(board,totalA,totalB,turn,index,side,count,temp)
+    return board,totalA,totalB
 
 
 
 def main(board,totalA,totalB):
-  board = aTurn(board, totalA, totalB, "A")
-  board = bTurn(flipBoard(board), totalB, totalA, "B")
-
+  global free
+  empty = False
+  while empty == False:
+    board, totalA,totalB = aTurn(board, totalA, totalB, "A")
+    free = False
+    displayBoard(board,formatScore(totalA),formatScore(totalB), "A")
+    empty = checkEmpty(board)
+    if empty == True:
+      turn = "A"
+      break
+    board, totalB,totalA = bTurn(flipBoard(board), totalB, totalA, "B")
+    free = False
+    displayBoard(board,formatScore(totalA),formatScore(totalB), "B")
+    empty = checkEmpty(board)
+    turn = "B"
+    flipBoard(board)
+  endGame(board,totalA,totalB,turn)
 
 
 def aTurn(board, totalA, totalB, turn):
+  global free
   displayBoard(board,formatScore(totalA),formatScore(totalB), turn)
-  inpA = len(board) - int(input("Please enter which number to choose from: ")) 
+  inpA = len(board) - int(input("Player A, please enter which number to choose from: "))
   board, totalA,totalB = traverse(board,inpA,totalA,totalB,turn)
-  print("second display")
-  displayBoard(board,formatScore(totalA),formatScore(totalB), turn)
-  return board
+  if free == False:
+   displayBoard(board,formatScore(totalA),formatScore(totalB), turn)
+  return board, totalA,totalB
 
 def bTurn(board, totalB, totalA, turn):
+  global free
   displayBoard(board,formatScore(totalB),formatScore(totalA), turn)
-  inpB = len(board) - int(input("Please enter which number to choose from: ")) 
+  inpB = len(board) - int(input("Player B, please enter which number to choose from: ")) 
   board, totalB, totalA = traverse(board,inpB,totalB,totalA,turn)
-  displayBoard(board,formatScore(totalB),formatScore(totalA), turn)
-  return board
-  
-  
-#to-do:
-#display board include playerA or playerB
-#add turnFlag (0 = A 1 = B)
-#free turn and capture
-#check for empty board
-#collect total from the players designated side
+  if free == False:
+    displayBoard(board,formatScore(totalB),formatScore(totalA), turn)
+  return board, totalB,totalA
 
-    
+def capture(board,totalA,totalB,turn,index,side,count,temp):
+  if count == temp - 1 and board[index][side] == " 00 ":
+    if turn == "A" and side == 0:
+      totalA += int(board[index][side + 1]) + 1
+      board[index][side + 1] = " 00 "
+      board[index][side] = " 00 "
+    elif turn == "A" and side == 1:
+      totalA += int(board[index][side - 1]) + 1
+      board[index][side - 1] = " 00 "
+      board[index][side] = " 00 "
+    elif turn == "B" and side == 0:
+      totalB += int(board[index][side - 1]) + 1
+      board[index][side + 1] = " 00 "
+      board[index][side] = " 00 "
+    elif turn == "A" and side == 1:
+      totalB += int(board[index][side - 1]) + 1
+      board[index][side - 1] = " 00 "
+      board[index][side] = " 00 "
+
+def checkEmpty(board):
+  for i in range(len(board)):
+    if board[i][0] != " 00 ":
+      return False
+  return True
+
+def endGame(board,totalA,totalB,turn):
+  if turn == "A":
+    totalA += 1
+    for i in range(len(board)):
+      boardB += int(board[i][1])
+  elif turn == "B":
+    totalB += 1
+    for i in range(len(board)):
+      boardA += int(board[i][1])
+  winCheck(totalA,totalB)
+
+def winCheck(totalA, totalB):
+  if totalA > totalB:
+    print("Player A won")
+  elif totalB > totalA:
+    print("Player B won")
+  else:
+    print("DRAW!!!")
+  
+
+
+
 
 
 board = makeBoard(2,6)
 totalA = 0
 totalB = 0
 main(board,totalA,totalB)
-x = input("test")
+
 
 
