@@ -167,12 +167,10 @@ def winVert(board,char,slot,pos): # check if there is a vertical win
 def winDiagRL(board,char,slot,pos): # check if there is a diagonal win (this diagonal goes from the right side of the board to the left)
   four = []
   count = 0
-  print(pos,slot)
   tempPos = pos
   tempSlot = slot
   while tempPos <= len(board)-1 and tempSlot <= len(board)-1 and tempPos >= 0 and tempSlot >= 0: #checks up the diagonal
     if board[tempPos][tempSlot] == char:
-      print(tempPos,tempSlot)
       count += 1
       four.append([tempPos,tempSlot])
       tempPos += 1
@@ -182,7 +180,6 @@ def winDiagRL(board,char,slot,pos): # check if there is a diagonal win (this dia
   tempPos = pos - 1 
   tempSlot = slot - 1
   while tempPos <= len(board)-1and tempSlot <= len(board)-1 and tempPos >= 0 and tempSlot >= 0:#checks down the diagonal
-    print("test", tempPos,tempSlot)
     if board[tempPos][tempSlot] == char:
       count += 1
       four.append([tempPos,tempSlot])
