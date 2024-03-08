@@ -26,7 +26,7 @@ def checkInp(inp,boards, players,c):
           flag = True
       if flag == True:
         break
-    if int(inp) >100 and int(inp) <= 1:
+    if int(inp) >100 or int(inp) < 1:
       flag = True
     if flag == False:
       return inp
