@@ -150,16 +150,29 @@ def randomNum(bingos,boards,players,length,width):
 
 
 def endGame(boards,players,length,width):
-  for c in range(len(players)):
+  wins = []
+  for p in players:
+    wins.append(True)
+  for c in range(len(players) ):
     for row in range(length):
       for index in range(width):
         if boards[c][row][index] != " XX ":
+<<<<<<< Updated upstream
           return False
     print(" Player {} won!!".format(players[c]))
     return True
+=======
+          wins[c]= False
+          break
+  for w in range(len(wins)):
+    if wins[w] == True:
+      print("Player {} won!!".format(players[w]))
+      return True
+  return False
+>>>>>>> Stashed changes
 
 
-# to do
+  # to do
 # fix endGame function
 # add comments
         
