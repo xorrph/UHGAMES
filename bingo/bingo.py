@@ -1,14 +1,14 @@
 empty = " -- "
 import time
 
-def makeBoard(width,length):
+def makeBoard(width,length): # initialise board
   global empty 
   board = []
   for i in range(length):
      board.append([empty] * width)
   return board 
 
-def displaySingleBoard(board,width,user):
+def displaySingleBoard(board,width,user): # print the board for one player
     print("{}'s board: ".format(user))
     for row in board:
         grid = (" | ").join(row)
@@ -16,17 +16,17 @@ def displaySingleBoard(board,width,user):
         print((" | ") + grid + (" | "))
     print(" +" + ("------+" * width))
 
-def checkInp(inp,boards, players,c):
+def checkInp(inp,boards, players,c): #check if the input is between 1 and 99 and also if it is not repeated in the players board already
   while True:
     inp = " " + '{:0>2}'.format(int(inp)) + " "
     flag = False
-    for row in boards[c]:
+    for row in boards[c]: # this loop checks for reptition 
       for num in row:
         if inp == num:
           flag = True
       if flag == True:
         break
-    if int(inp) >100 or int(inp) < 1:
+    if int(inp) >100 or int(inp) < 1: #this checks if it is wthin the boundaries of 1 to 99
       flag = True
     if flag == False:
       return inp
@@ -44,16 +44,16 @@ def start(): # initialise game and variables
     turns = int(input("Enter how many players are playing: "))
     length = int(input("Enter the length of the board: "))
     width = int(input("Enter the width of the board: "))
-    for c in range(turns):
+    for c in range(turns): # allows each player to enter their username / name and a number into their board
                 user =input("Player {}, please enter your name: ".format(c + 1))
-                board = makeBoard(width,length)
+                board = makeBoard(width,length) 
                 boards.append(board)
                 players.append(user)
                 displaySingleBoard(board,width,user)
     enter(boards,players,length,width)
-    displayAllBoards(boards,players,length,"","")
+    displayAllBoards(boards,players,width,"","")
     r = 1
-    while end == False:
+    while end == False: # loops through until someone has a bingo board
       print("")
       print(" Round {}".format(r))
       changes, bingos, boards, num =  randomNum(bingos,boards,players,length,width)
@@ -62,18 +62,18 @@ def start(): # initialise game and variables
       displayAllBoards(boards,players,width,topline,L)
       time.sleep(2.5)
       r += 1
-      end = endGame(boards,players,length,width) # do this + add comments to this and mancala
+      end = endGame(boards,players,length,width) # checks if someone has a fully crossed out board
 
-def enter(boards,players,length,width):
+def enter(boards,players,length,width): # lets the player enter a number for their board
   for c in range(len(players)):
     for row in range(length):
       for index in range(width):
         inp = input("{}, please enter a number between 1 and 99: ".format(players[c]))
         inp = checkInp(inp,boards, players,c)
         boards[c][row][index] = " " + '{:0>2}'.format(int(inp)) + " "
-        displaySingleBoard(boards[c],length,players[c])
+        displaySingleBoard(boards[c],width,players[c])
 
-def displayRandomNum(num, players,width):
+def displayRandomNum(num, players,width): # displays the random bingo number
   line = "======="
   newLine = "="
   mid = ""
@@ -85,7 +85,7 @@ def displayRandomNum(num, players,width):
   print(" " + "<" * (int((len(x) - 24)/2)) +" The Bingo Number is" + num + ">" * (int((len(x) - 24)/2) -1) )
   return x
 
-def dispChange(changes,length):
+def dispChange(changes,length): # change the displayAllBoards formatting if a board gets a number crossed of
   L = " "
   for i in range(len(changes)):
     if changes[i]== 1:
@@ -100,7 +100,7 @@ def dispChange(changes,length):
   
   
  
-def displayAllBoards(boards,players,width,topline,L):
+def displayAllBoards(boards,players,width,topline,L): # displays each board on the same line
   print(topline)
   print("")
   print(L)
@@ -121,25 +121,25 @@ def displayAllBoards(boards,players,width,topline,L):
   return lines1
 
 
-def randomNum(bingos,boards,players,length,width):
+def randomNum(bingos,boards,players,length,width): # generates a random number and checks on each board if it is  on the board then crosses it out
   import random
   changes= []
   flag = False
   cF = False
   while flag == False:
-    r = random.randint(1,99)
-    rFormat = " " + '{:0>2}'.format(int(r)) + " "
-    if rFormat not in bingos:
+    r = random.randint(1,99) # generates random number
+    rFormat = " " + '{:0>2}'.format(int(r)) + " " # formats the number to be of format 00
+    if rFormat not in bingos: # code to not repeat numbers
       flag = True
       bingos.append(rFormat)
-      for c in range(len(players)):
+      for c in range(len(players)): # checks if nunber is on a board then crosses it out
         for row in range(length):
           for index in range(width):
             if boards[c][row][index] == rFormat:
               boards[c][row][index] = " XX "
               cF = True
               break
-        if cF == True:
+        if cF == True: 
           changes.append(1)
           cF = False
         else:
@@ -149,32 +149,23 @@ def randomNum(bingos,boards,players,length,width):
 
 
 
-def endGame(boards,players,length,width):
+def endGame(boards,players,length,width): # checks for a full board
   wins = []
-  for p in players:
+  for p in players: # intialises the list to check if there is a win
     wins.append(True)
   for c in range(len(players) ):
     for row in range(length):
       for index in range(width):
-        if boards[c][row][index] != " XX ":
-<<<<<<< Updated upstream
-          return False
-    print(" Player {} won!!".format(players[c]))
-    return True
-=======
+        if boards[c][row][index] != " XX ": # if it finds a value that is not crossed out then it sets the board to false and exits out of looping through the board
           wins[c]= False
           break
-  for w in range(len(wins)):
+  for w in range(len(wins)): #loops to check if anyone has a win board in the list
     if wins[w] == True:
-      print("Player {} won!!".format(players[w]))
+      print("{} won!!".format(players[w]))
       return True
   return False
->>>>>>> Stashed changes
 
 
-  # to do
-# fix endGame function
-# add comments
         
 
 start()
