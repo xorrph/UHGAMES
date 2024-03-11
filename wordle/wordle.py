@@ -48,7 +48,7 @@ def checkAnswer(userInput, answer):
     for index in range(len(userInput)):
           if userInput[index] in answer and answer[index] != "@":
               answer[answer.index(userInput[index])] = ("!")# this accounts for duplicate letters making sure the clues given are accurate
-              clue[index] = ("-")#in the word not correct place
+              clue[index] = ("?")#in the word not correct place
           elif userInput[index] not in answer and answer[index] != "@":
               clue[index] = ("X")
     return clue
