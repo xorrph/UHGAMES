@@ -1,7 +1,6 @@
 # MANCALA
 import time
 empty = " 04 " 
-free = False
 
 
 def makeBoard(width,length):
@@ -55,102 +54,87 @@ def formatSquare(num):
         return   " 0" + num[0] + " "
 
 def traverse(board,num,totalA,totalB,turn):
-    global free
-    count = 0 
-    temp =  int(board[num][0] )
-    start = num 
-    side = 0
-    board[start][side] = formatSquare(0)
-    index  = start + 1 
-    while count < temp:
-        if count < temp and index <= len(board)  - 1 and side == 0:
-            board[index][side]  = formatSquare(int(board[index][side]) + 1)
-            index += 1
-            count += 1
-        elif count < temp and (index == len(board) or index == -1):
-            if side == 0:
-                totalA += 1
-                if count == temp - 1 and turn == "A":
-                  free = True
-                  board, totalA,totalB = aTurn(board, totalA, totalB, turn)
-                elif count == temp - 1 and turn == "B":
-                  free = True
-                  board, totalA,totalB = bTurn(board, totalA, totalB, turn)
-                else:
-                  side = 1
-                  index = len(board) -1
-            elif side == 1:
-                totalB +=1
-                side = 0
-                index = 0
-            count += 1
-        elif count < temp and index >= 0 and side == 1:
-          board[index][side]  =  formatSquare(int(board[index][side]) + 1)
-          index -= 1
-          count += 1
-    capture(board,totalA,totalB,turn,index,side,count,temp)
-    return board,totalA,totalB
-
-
+  count = 0
+  temp =  int(board[num][0] )
+  board[num][0] = formatSquare(0)
+  boardA,boardB = twoLists(board)
+  f = False
+  while count < temp:
+    for a in range(num+1, len(boardA)):
+      board,totalA,totalB,c = capture(oneList(boardA, boardB),totalA,totalB,turn,a,count,temp)
+      boardA,boardB = twoLists(board)
+      if c == False:
+        boardA[a] = formatSquare(int(boardA[a]) + 1)
+      count +=1
+      if count >= temp:
+          break
+    totalA += 1
+    count +=1
+    if count >=temp:
+        f = True
+        break
+    for b in range(len(boardB)-1,-1,-1):
+      boardB[b] = formatSquare(int(boardB[b]) + 1)
+      count +=1
+      if count >= temp:
+        break
+  return oneList(boardA, boardB),totalA,totalB,f,c
+    
 
 def main(board,totalA,totalB):
-  global free
   empty = False
   while empty == False:
-    board, totalA,totalB = aTurn(board, totalA, totalB, "A")
-    free = False
-    displayBoard(board,formatScore(totalA),formatScore(totalB), "A")
-    empty = checkEmpty(board)
-    if empty == True:
-      turn = "A"
-      break
+    f = True
+    turn = "A"
+    while  f == True:
+      board, totalA,totalB,f,c = aTurn(board, totalA, totalB, "A")# another while loop, while F ( Free turn) is true it repeats aTurn  , also if capture is true then break
+      empty = checkEmpty(board)
+      if empty == True:
+        turn = "A"
+        break
+      if c == True:
+        break
     time.sleep(1)
-    board, totalB,totalA = bTurn(flipBoard(board), totalB, totalA, "B")
-    free = False
-    displayBoard(board,formatScore(totalA),formatScore(totalB), "B")
-    empty = checkEmpty(board)
+    f = True
     turn = "B"
+    flipBoard(board)
+    while  f == True:
+      board, totalB,totalA,f,c= bTurn(board, totalB, totalA, "B")
+      empty = checkEmpty(board)
+      if empty == True:
+        turn = "B"
+        break
+      if c == True:
+        break
     flipBoard(board)
     time.sleep(1)
   endGame(board,totalA,totalB,turn)
 
-
 def aTurn(board, totalA, totalB, turn):
-  global free
   displayBoard(board,formatScore(totalA),formatScore(totalB), turn)
   inpA = len(board) - int(input(" Player A, please enter which slot to choose from: "))
-  board, totalA,totalB = traverse(board,inpA,totalA,totalB,turn)
-  if free == False:
-    displayBoard(board,formatScore(totalA),formatScore(totalB), turn)
-  return board, totalA,totalB
+  board, totalA,totalB,f,c = traverse(board,inpA,totalA,totalB,turn)# f is also returned
+  displayBoard(board,formatScore(totalA),formatScore(totalB), turn)
+  return board, totalA,totalB,f,c # f is also returned
 
 def bTurn(board, totalB, totalA, turn):
-  global free
   displayBoard(board,formatScore(totalB),formatScore(totalA), turn)
   inpB = len(board) - int(input(" Player B, please enter which slot to choose from: ")) 
-  board, totalB, totalA = traverse(board,inpB,totalB,totalA,turn)
-  if free == False:
-    displayBoard(board,formatScore(totalB),formatScore(totalA), turn)
-  return board, totalB,totalA
+  board, totalB, totalA,f,c = traverse(board,inpB,totalB,totalA,turn)
+  displayBoard(board,formatScore(totalB),formatScore(totalA), turn)
+  return board, totalB,totalA,f,c
 
-def capture(board,totalA,totalB,turn,index,side,count,temp):
-  if count == temp - 1 and board[index][side] == " 00 ":
-    if turn == "A" and side == 0:
-      totalA += int(board[index][side + 1]) + 1
-      board[index][side + 1] = " 00 "
-      board[index][side] = " 00 "
-    elif turn == "A" and side == 1:
-      totalA += int(board[index][side - 1]) + 1
-      board[index][side - 1] = " 00 "
-      board[index][side] = " 00 "
-    elif turn == "B" and side == 0:
-      totalB += int(board[index][side - 1]) + 1
-      board[index][side + 1] = " 00 "
-      board[index][side] = " 00 "
-    elif turn == "A" and side == 1:
-      totalB += int(board[index][side - 1]) + 1
-      board[index][side - 1] = " 00 "
-      board[index][side] = " 00 "
+def capture(board,totalA,totalB,turn,i,count,temp): 
+  print("same",count , temp ,"00", board[i][0] )
+  c = False
+  if count == temp - 1 and board[i][0] == " 00 ":
+    c = True
+    print(c)
+    totalA += int(board[i][1])  + 1
+    board[i][1] = " 00 "
+    board[i][0] = " 00 "
+  return board,totalA,totalB,c
+  
 
 def checkEmpty(board):
   for i in range(len(board)):
@@ -177,15 +161,27 @@ def winCheck(totalA, totalB):
   else:
     print("DRAW!!!")
   
+def twoLists(board):
+  boardA = []
+  boardB = []
+  for i in range(len(board)):
+    boardA.append(board[i][0])
+    boardB.append(board[i][1])
+  return boardA, boardB
+
+def oneList(boardA,boardB):
+  board = []
+  for i in range(len(boardA)):
+    board.append([boardA[i],boardB[i]])
+  return board
 
 
 
-
-
+boardA = []
+boardB = []
 board = makeBoard(2,6)
 totalA = 0
 totalB = 0
 main(board,totalA,totalB)
-
 
 
