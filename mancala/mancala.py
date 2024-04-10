@@ -3,28 +3,28 @@ import time
 empty = " 04 " 
 
 
-def makeBoard(width,length):
+def makeBoard(width,length): # intialise board
   global empty 
   board = []
   for i in range(length):
      board.append([empty] * width)
   return board 
 
-def displayBoard(board,totalA,totalB,turn):
-    count = 6
+def displayBoard(board,totalA,totalB,turn): # display the board 
+    count = 6 
     print("                               ")
     print("----------------------")
     print("                               ")
     print("   Player {} board: ".format(turn))
     print("   +=============+")
-    print("   |     " + totalB + "     |")
+    print("   |     " + totalB + "     |") # display the total at the top and bottom of the boards for opponent of current turn
     print("   +=============+")
     for row in board:
         grid = (" | ").join(row)
-        print(" "+str(count)+ (" | ") + grid + (" | "))
+        print(" "+str(count)+ (" | ") + grid + (" | "))# display number of stones and what each number key corresponds to
         count -= 1
     print("   +=============+")
-    print("   |     " + totalA + "     |")
+    print("   |     " + totalA + "     |")# display the total at the top and bottom of the boards for currrent turn
     print("   +=============+")
     print("                               ")
     print("----------------------")
@@ -32,28 +32,28 @@ def displayBoard(board,totalA,totalB,turn):
 
 
 
-def flipBoard(board):
+def flipBoard(board): # flip the board for every turn
   y = len(board) - 1
   for x in range(len(board)):
     board[x][1],board[y][0] = board[y][0], board[x][1]
     y -= 1
   return board
 
-def formatScore(num):
+def formatScore(num): # format the total to fit with how the display should look
     num = str(num)
     if len(num) > 1:
         return  num[0]+ " " + num[1]
     elif len(num) == 1:
         return   "0 " + num[0]
 
-def formatSquare(num):
+def formatSquare(num): # format the stone numbers to fit with how the display should look
     num = str(num)
     if len(num) > 1:
         return  " " + num[0]+ num[1] + " "
     elif len(num) == 1:
         return   " 0" + num[0] + " "
 
-def traverse(board,num,totalA,totalB,turn):
+def traverse(board,num,totalA,totalB,turn): # this deals with moving the stones around the board and calling the capture function
   count = 0
   temp =  int(board[num][0] )
   board[num][0] = formatSquare(0)
@@ -81,13 +81,13 @@ def traverse(board,num,totalA,totalB,turn):
   return oneList(boardA, boardB),totalA,totalB,f,c
     
 
-def main(board,totalA,totalB):
+def main(board,totalA,totalB):# this function controls the flow of the game, checks if the game has ended, a capture has been made or if there is a free turn and acts accordingaly 
   empty = False
   while empty == False:
     f = True
     turn = "A"
     while  f == True:
-      board, totalA,totalB,f,c = aTurn(board, totalA, totalB, "A")# another while loop, while F ( Free turn) is true it repeats aTurn  , also if capture is true then break
+      board, totalA,totalB,f,c = aTurn(board, totalA, totalB, "A")
       empty = checkEmpty(board)
       if empty == True:
         turn = "A"
@@ -110,21 +110,21 @@ def main(board,totalA,totalB):
     time.sleep(1)
   endGame(board,totalA,totalB,turn)
 
-def aTurn(board, totalA, totalB, turn):
+def aTurn(board, totalA, totalB, turn): #player  A turn (1st person to play)
   displayBoard(board,formatScore(totalA),formatScore(totalB), turn)
   inpA = len(board) - int(input(" Player A, please enter which slot to choose from: "))
-  board, totalA,totalB,f,c = traverse(board,inpA,totalA,totalB,turn)# f is also returned
+  board, totalA,totalB,f,c = traverse(board,inpA,totalA,totalB,turn)#f = free, c = capture
   displayBoard(board,formatScore(totalA),formatScore(totalB), turn)
-  return board, totalA,totalB,f,c # f is also returned
+  return board, totalA,totalB,f,c 
 
-def bTurn(board, totalB, totalA, turn):
+def bTurn(board, totalB, totalA, turn):# player A turn (1st person to play)
   displayBoard(board,formatScore(totalB),formatScore(totalA), turn)
   inpB = len(board) - int(input(" Player B, please enter which slot to choose from: ")) 
   board, totalB, totalA,f,c = traverse(board,inpB,totalB,totalA,turn)
   displayBoard(board,formatScore(totalB),formatScore(totalA), turn)
   return board, totalB,totalA,f,c
 
-def capture(board,totalA,totalB,turn,i,count,temp): 
+def capture(board,totalA,totalB,turn,i,count,temp): # deals with capturing by checking if the last stone reached an empty square
   print("same",count , temp ,"00", board[i][0] )
   c = False
   if count == temp - 1 and board[i][0] == " 00 ":
@@ -136,13 +136,17 @@ def capture(board,totalA,totalB,turn,i,count,temp):
   return board,totalA,totalB,c
   
 
-def checkEmpty(board):
+def checkEmpty(board): # if the person who made the last move board turns empty it will end the game
   for i in range(len(board)):
     if board[i][0] != " 00 ":
       return False
   return True
+  for i in range(len(board)): # this is only needed if the current player captures the last stones
+    if board[i][1] != " 00 ":
+      return False
+  return True
 
-def endGame(board,totalA,totalB,turn):
+def endGame(board,totalA,totalB,turn): # finalises total for both sides
   if turn == "A":
     totalA += 1
     for i in range(len(board)):
@@ -153,7 +157,7 @@ def endGame(board,totalA,totalB,turn):
       boardA += int(board[i][1])
   winCheck(totalA,totalB)
 
-def winCheck(totalA, totalB):
+def winCheck(totalA, totalB): # shows the winner
   if totalA > totalB:
     print("Player A won")
   elif totalB > totalA:
@@ -161,7 +165,7 @@ def winCheck(totalA, totalB):
   else:
     print("DRAW!!!")
   
-def twoLists(board):
+def twoLists(board): # seperates the board into two seperate lists
   boardA = []
   boardB = []
   for i in range(len(board)):
@@ -169,14 +173,14 @@ def twoLists(board):
     boardB.append(board[i][1])
   return boardA, boardB
 
-def oneList(boardA,boardB):
+def oneList(boardA,boardB):# joins two seperate lists into one 
   board = []
   for i in range(len(boardA)):
     board.append([boardA[i],boardB[i]])
   return board
 
 
-
+# starting values
 boardA = []
 boardB = []
 board = makeBoard(2,6)
