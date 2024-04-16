@@ -1,10 +1,9 @@
 #wordle
 #global variables and imports
-empty = " "
 import random
 
 def makeBoard(width,length): # make the board (this is a static 6  by 6 since words are 6 long and there are 6 guesses)
-  global empty 
+  empty = " "
   board = []
   for i in range(length):
      board.append([empty] * width)
@@ -21,7 +20,7 @@ def displayBoard(board): # display the board and guesses made
 def randomWord(): # select a random word from a text file containing common 6 letter words
     file = open("answer.txt", "r")
     content = file.readlines() 
-    x = random.randint(0,len(content))# select a random word
+    x = random.randint(0,len(content) - 1)# select a random word
     word = content[x]
     return word
 
@@ -31,7 +30,6 @@ def validWord(userInput): # check if the word inputted by the user is a valid wo
   while  True:
     userInput  = " " + userInput + " "
     for x in content:
-     f.flush()
      if x.find(userInput) != -1:
        return userInput.strip( )
         
@@ -53,24 +51,17 @@ def checkAnswer(userInput, answer):
               clue[index] = ("X")
     return clue
 
-def green(userInput, answer, clue):
-  for index in range(len(userInput)):
-        if userInput[index] == answer[index]:
-              answer[index] = ("!")# this accounts for duplicate letters making sure the clues given are accurate
-              clue[index] = ("+")#in the correct place
-  return clue
-
 
 def changeBoard(board, clue, guess):
-  for letter in range(6): # add the new word
+  for letter in range(6): # add the new word to the board
     board[guess][letter] = clue[letter]
   return board
 
-def checkWin(guess,board):#check if the word has been guessed
-  for index in range(len(board)):
-    if board[guess ][index] != "+": # if it finds anything other than a correct letter it returns false
-      return False
-  return True #all values were correct thus returns true
+def checkWin(userInput,answer):#check if the word has been guessed
+  if userInput == answer:# check if the users word is equal to the answer
+    return True# if so return True
+  else:
+    return False# else return False
 
 def end(win,answer,guess): #end of game
   if win == True:
@@ -83,8 +74,6 @@ def end(win,answer,guess): #end of game
   else:
     input(" Thanks for playing!")
 
-#todo
-#make the game loop if the player wants to continue playing
 
 def main():
   guess = 0
@@ -97,7 +86,7 @@ def main():
     userInput = validWord(userInput)
     clue = checkAnswer (userInput, list(word))
     board = changeBoard(board, clue, guess)
-    if checkWin(guess ,board) == True: # check the condition the win condition after a turn
+    if checkWin(userInput,answer) == True: # check the condition the win condition after a turn
       win = True
       guess += 1
       displayBoard(board)
