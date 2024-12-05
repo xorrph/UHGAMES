@@ -57,8 +57,8 @@ def changeBoard(board, clue, guess):
     board[guess][letter] = clue[letter]
   return board
 
-def checkWin(userInput,answer):#check if the word has been guessed
-  if userInput == answer:# check if the users word is equal to the answer
+def checkWin(clue):#check if the word has been guessed
+  if clue == ['+']*6:# check if the users word is equal to the answer
     return True# if so return True
   else:
     return False# else return False
@@ -86,7 +86,7 @@ def main():
     userInput = validWord(userInput)
     clue = checkAnswer (userInput, list(word))
     board = changeBoard(board, clue, guess)
-    if checkWin(userInput,word) == True: # check the condition the win condition after a turn
+    if checkWin(clue) == True: # check the condition the win condition after a turn
       win = True
       guess += 1
       displayBoard(board)
