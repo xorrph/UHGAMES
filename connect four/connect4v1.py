@@ -65,9 +65,11 @@ def displayBoard(board):#print the board by joining the items within the list wi
 
 
 def checkSize(length,width):#make sure the size allows for the connect four
-    if length < 4 or width < 4:
+    while length < 4 or width < 4:
         length = int(input("Enter the length of the board: "))
         width = int(input("Enter the width of the board: "))
+    return length,width
+        
         
 
 def add(board,slot,char):#adds the players character into a slot
@@ -260,7 +262,7 @@ def start(): # initialise game and variables and user inputs
     turn = 0
     length = int(input("Enter the length of the board: "))
     width = int(input("Enter the width of the board: "))
-    checkSize(length,width)
+    length,width = checkSize(length,width)
     empty  = ' - '
     user1 = input("Player 1, please enter your name: ")
     char1= input("Please enter a character of your choosing:  ")

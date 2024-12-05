@@ -86,7 +86,7 @@ def main():
     userInput = validWord(userInput)
     clue = checkAnswer (userInput, list(word))
     board = changeBoard(board, clue, guess)
-    if checkWin(userInput,answer) == True: # check the condition the win condition after a turn
+    if checkWin(userInput,word) == True: # check the condition the win condition after a turn
       win = True
       guess += 1
       displayBoard(board)
